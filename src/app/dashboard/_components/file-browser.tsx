@@ -74,13 +74,22 @@ export function FileBrowser({
   );
   const isLoading = files === undefined;
 
+  // const modifiedFiles =
+  //   files?.map((file) => ({
+  //     ...file,
+  //     isFavorited: (favorites ?? []).some(
+  //       (favorite) => favorite.fileId === file._id
+  //     ),
+  //   })) ?? [];
   const modifiedFiles =
     files?.map((file) => ({
       ...file,
       isFavorited: (favorites ?? []).some(
         (favorite) => favorite.fileId === file._id
       ),
+      url: file.url ?? null, // Ensure 'url' is included
     })) ?? [];
+
 
   return (
     <div>

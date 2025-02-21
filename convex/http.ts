@@ -6,7 +6,7 @@ import { httpAction } from "./_generated/server";
 const http = httpRouter();
 
 http.route({
-  path: "/clerk",
+  path: "/clerk-users-webhook",
   method: "POST",
   handler: httpAction(async (ctx, request) => {
     const payloadString = await request.text();
@@ -26,11 +26,11 @@ http.route({
         case "user.created":
           await ctx.runMutation(internal.users.createUser, {
             tokenIdentifier: `https://${process.env.CLERK_HOSTNAME}|${result.data.id}`,
-            name: `${result.data.first_name ?? ""} ${
-              result.data.last_name ?? ""
-            }`,
+            name: `${result.data.first_name ?? ""} ${result.data.last_name ?? ""}`,
             image: result.data.image_url,
+            email: result.data.email_addresses?.find(email => email.id === result.data.primary_email_address_id)?.email_address ?? "",
           });
+          
           break;
         case "user.updated":
           await ctx.runMutation(internal.users.updateUser, {

@@ -59,6 +59,8 @@ export function UploadButton() {
 
     const postUrl = await generateUploadUrl();
 
+    console.log("Generated upload URL:", postUrl);
+
     const fileType = values.file[0].type;
 
     const result = await fetch(postUrl, {
@@ -66,7 +68,14 @@ export function UploadButton() {
       headers: { "Content-Type": fileType },
       body: values.file[0],
     });
+
+    if (!result.ok) {
+      console.error("File upload failed:", result.status, result.statusText);
+    }
+
     const { storageId } = await result.json();
+
+    console.log("Storage ID:", storageId);
 
     const types = {
       "image/png": "image",
@@ -99,6 +108,65 @@ export function UploadButton() {
       });
     }
   }
+  // async function onSubmit(values: z.infer<typeof formSchema>) {
+  //   if (!orgId) return;
+  
+  //   try {
+  //     const postUrl = await generateUploadUrl();
+  //     console.log("Generated upload URL:", postUrl);
+  
+  //     const fileType = values.file[0].type;
+  
+  //     const result = await fetch(postUrl, {
+  //       method: "POST",
+  //       headers: { "Content-Type": fileType },
+  //       body: values.file[0],
+  //     });
+  
+  //     if (!result.ok) {
+  //       console.error("File upload failed:", result.status, result.statusText);
+  //       toast({
+  //         variant: "destructive",
+  //         title: "Upload Error",
+  //         description: "The file upload failed. Please try again.",
+  //       });
+  //       return;
+  //     }
+  
+  //     const { storageId } = await result.json();
+  //     console.log("Storage ID:", storageId);
+  
+  //     const types = {
+  //       "image/png": "image",
+  //       "application/pdf": "pdf",
+  //       "text/csv": "csv",
+  //     } as Record<string, Doc<"files">["type"]>;
+  
+  //     await createFile({
+  //       name: values.title,
+  //       fileId: storageId,
+  //       orgId,
+  //       type: types[fileType],
+  //     });
+  
+  //     form.reset();
+  //     setIsFileDialogOpen(false);
+  
+  //     toast({
+  //       variant: "success",
+  //       title: "File Uploaded",
+  //       description: "Now everyone can view your file",
+  //     });
+  //   } catch (err) {
+  //     console.error("An error occurred:", err);
+  //     toast({
+  //       variant: "destructive",
+  //       title: "Something went wrong",
+  //       description: "Your file could not be uploaded, try again later",
+  //     });
+  //   }
+  // }
+  
 
   let orgId: string | undefined = undefined;
   if (organization.isLoaded && user.isLoaded) {
